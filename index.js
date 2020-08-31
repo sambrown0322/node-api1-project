@@ -60,7 +60,7 @@ server.post("/api/users", (req, res) => {
 });
 
 server.delete("/api/users/:id", (req, res) => {
-  const id = Number(req.params.id - 1);
+  const id = Number(req.params.id);
   if (users[id]) {
     res.status(200).json(newUsers);
   } else if (!users[id]) {
@@ -75,15 +75,12 @@ server.delete("/api/users/:id", (req, res) => {
 });
 server.put("/api/users/:id", (req, res) => {
   const changes = req.body;
-  const id = Number(req.params.id - 1);
+  const id = Number(req.params.id);
 
   let found = users.find((user) => user.id === id);
+  //   Object.assign(found, changes);
 
-  if (found) {
-    Object.assign(found, changes);
-
-    res.status(200).json(found);
-  } else if (!found) {
+  if (!found) {
     res
       .status(404)
       .json({ message: "The user with the specified ID does not exist." });
@@ -91,13 +88,17 @@ server.put("/api/users/:id", (req, res) => {
     res
       .status(400)
       .json({ errorMessage: "Please provide name and bio for the user." });
+  } else if (found) {
+    Object.assign(found, changes);
+
+    res.status(200).json(found);
   } else {
     res
       .status(500)
       .json({ errorMessage: "The user information could not be modified." });
   }
 
-  res.status(204).end();
+  //   res.status(200).json(found);
 });
 
 const port = 7000;
